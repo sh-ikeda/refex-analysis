@@ -41,14 +41,15 @@ parser <- OptionParser(option_list = optslist,
                        description = "--g1, --g2, -i, -m, and -o are required")
 opts <- parse_args(parser)
 
-if (any(c(opts$group1, opts$group2, opts$count_table, opts$mapping_table, opts$output_filename) == "")) {
+if (any(c(opts$group1, opts$group2,
+          opts$count_table, opts$mapping_table, opts$output_filename) == "")) {
     print_help(parser)
     Exit(1)
 }
 if (opts$label1 == "")
-    opts$label1 = opts$group1
+    opts$label1 <- opts$group1
 if (opts$label2 == "")
-    opts$label2 = opts$group2
+    opts$label2 <- opts$group2
 
 library(edgeR)
 library(data.table)
@@ -68,9 +69,6 @@ for (i in seq_len(length(group_ids))) {
     }
 }
 
-## g1_eachsample_ids <- mapping[mapping[, 1] %in% g1_group_ids, 2]
-## g2_eachsample_ids <- mapping[mapping[, 1] %in% g2_group_ids, 2]
-## eachsample_ids <- c(g1_eachsample_ids, g2_eachsample_ids)
 g1_re <- gsub(",", "|", opts$group1)
 g1_eachsample_ids <- mapping[regexpr(g1_re, mapping[, 1]) > 0, 2]
 g1_eachsample_re <- paste(g1_eachsample_ids, collapse = "|")
@@ -80,24 +78,13 @@ g2_eachsample_re <- paste(g2_eachsample_ids, collapse = "|")
 eachsample_re <- paste(g1_eachsample_re, g2_eachsample_re, sep = "|")
 
 count_reduced <- count[, regexpr(eachsample_re, colnames(count)) > 0]
-## count_reduced <- count[, colnames(count) %in% eachsample_ids]
-# column names might be duplicated
-# colnames(count_reduced) <- colnames(count)[colnames(count) %in% eachsample_ids]
 
-## # meta は一列目にサンプル名、二列目にグループ名を入れた tsv
-## meta <- read.table(input_meta, sep = "\t")
-# group <- factor(meta$V2[match(colnames(count_reduced), meta$V1)])
-# reduce したテーブルの各列がどっちのグループに属するのか。
+# assign group names to the columns of the reduced table
 group <- factor(
     ifelse(regexpr(g1_eachsample_re, colnames(count_reduced)) > 0,
            opts$label1,
            ifelse(regexpr(g2_eachsample_re, colnames(count_reduced)) > 0,
                   opts$label2, F)))
-## group <- factor(
-##     ifelse(colnames(count_reduced) %in% g1_eachsample_ids,
-##            opts$name1,
-##            ifelse(colnames(count_reduced) %in% g2_eachsample_ids,
-##                   opts$name2, F)))
 count_matrix <- as.matrix(count_reduced)
 print(count_reduced[1:3, ])
 print(group)
