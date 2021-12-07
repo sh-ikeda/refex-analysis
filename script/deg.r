@@ -26,6 +26,12 @@ optslist <- list(
                 help = "File name of output table",
                 default = "",
                 dest = "output_filename"),
+    make_option(c("-d", "--debug"),
+                action = "store_true",
+                type = "logical",
+                help = "debug mode",
+                default = FALSE,
+                dest = "debug"),
     make_option("--l1",
                 type = "character",
                 help = "Label for group 1",
@@ -86,8 +92,10 @@ group <- factor(
            ifelse(regexpr(g2_eachsample_re, colnames(count_reduced)) > 0,
                   opts$label2, F)))
 count_matrix <- as.matrix(count_reduced)
-print(count_reduced[1:3, ])
-print(group)
+if (opts$debug) {
+    print(count_reduced[1:3, ])
+    print(group)
+}
 
 message("Calculating DEG...")
 t <- Sys.time()
