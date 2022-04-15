@@ -107,5 +107,7 @@ result <- exactTest(d)
 message("calculation time: ", Sys.time() - t)
 
 table <- as.data.frame(topTags(result, n = nrow(count)))
-write.table(table, file = opts$output_filename, col.names = T,
-            row.names = T, sep = "\t", quote = FALSE)
+table <- cbind(rownames(table), table)
+colnames(table)[1] <- "GeneId"
+write.table(table, file = opts$output_filename,
+            row.names = F, sep = "\t", quote = FALSE)
