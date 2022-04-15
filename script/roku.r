@@ -7,8 +7,12 @@ input_logtpm <- args[1]
 input_res <- args[2]
 output_filename  <- args[3]
 
-logtpm_whole <- read.table(input_logtpm, header = TRUE, row.names = 1, sep = "\t", quote = "")
 message("[", Sys.time(), "] Reading the input table")
+logtpm_whole <- data.frame(fread(input_logtpm,
+                                 header = TRUE,
+                                 sep = "\t",
+                                 quote = ""),
+                           row.names = 1)
 res <- read.table(input_res)
 logtpm_target <- logtpm_whole[, res[, 1]]
 tpm_target  <- 2^logtpm_target - 1
