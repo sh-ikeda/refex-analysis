@@ -13,7 +13,7 @@ logtpm_whole <- data.frame(fread(input_logtpm,
                                  sep = "\t",
                                  quote = ""),
                            row.names = 1)
-res <- read.table(input_res)
+res <- read.table(input_res, sep = "\t")
 logtpm_target <- logtpm_whole[, res[, 1]]
 tpm_target  <- 2^logtpm_target - 1
 
