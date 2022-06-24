@@ -23,8 +23,8 @@ tau <- apply(1-tpm_target/apply(tpm_target, 1, max), 1, sum)/(ncol(tpm_target)-1
 outlier <- result$outlier
 modH <- result$modH
 ranking <- result$rank
-
-tmp <- cbind(rownames(logtpm_target), outlier, modH, ranking, tau)
+geneId <- rownames(logtpm_target)
+tmp <- cbind(geneId, modH, ranking, tau, outlier)
 message("[", Sys.time(), "] Writing")
 write.table(tmp, output_filename, sep = "\t", append = F, quote = F, row.names = F)
 message("[", Sys.time(), "] Done")
