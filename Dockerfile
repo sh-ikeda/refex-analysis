@@ -6,8 +6,9 @@ RUN apt-get update \
 
 RUN R -e 'BiocManager::install("edgeR")'
 RUN R -e 'install.packages(c("data.table", "optparse", "svglite"))'
+RUN R -e 'BiocManager::install("TCC")'
 
 COPY . /work/refex-analysis/
 WORKDIR /work/
 
-CMD ["Rscript", "/app/refex-analysis/script/deg.r"]
+CMD ["Rscript", "/work/refex-analysis/script/deg.r"]
